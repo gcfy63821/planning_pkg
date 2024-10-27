@@ -11,7 +11,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
     typedef std::shared_ptr<Node> Ptr;
 
-    Node(){}
+    Node() : cost_(0) {}
 
 
 public:
@@ -22,6 +22,8 @@ public:
 
     Ptr parent_ = nullptr;
     std::string note_ = ""; 
+    // for rrtstar
+    double cost_ = 0;
 };
 
 

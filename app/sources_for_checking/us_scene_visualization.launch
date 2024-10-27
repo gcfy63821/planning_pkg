@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+
+<launch>
+  <arg name="load_gripper" default="false" />
+  <!-- -->
+  <arg name="load_transducer" default="true" />
+
+  <!-- <arg name="model" default="$(find franka_description)/robots/panda_arm.urdf.xacro"/>
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model) hand:=$(arg load_gripper) transducer:=$(arg load_transducer)" /> -->
+
+  <param name="robot_description" command="$(find xacro)/xacro $(find franka_description)/robots/panda_arm.urdf.xacro hand:=$(arg load_gripper) transducer:=$(arg load_transducer)" />
+
+  <node pkg="rviz" type="rviz" output="screen" name="rviz_scene_visual" args="-d $(find us_scene_visualization)/launch/visualization.rviz"/>
+
+</launch>

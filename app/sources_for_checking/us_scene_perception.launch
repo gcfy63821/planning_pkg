@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+
+<launch>
+    <arg name="enable_record" default="false" />
+    
+    <node name="us_scene_perception_human_identify" pkg="us_scene_perception" type="human_identify.py" output="screen">
+        <param name="enable_record" value="$(arg enable_record)" />
+    </node>
+
+    <!-- <node name="us_scene_perception_scan_base_publisher" pkg="us_scene_perception" type="us_scene_perception_scan_base_publisher" output="screen" /> -->
+
+</launch>

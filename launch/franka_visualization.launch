@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+
+<launch>
+  <arg name="load_gripper" default="false" />
+  <arg name="use_transducer" default="true" />
+  <arg name="robot_ip" default="172.16.0.2" />
+  <arg name="publish_rate" default="30" />
+  <arg name="load_robot_description" default="true" />
+  <arg name="robot_description" default="robot_description" />
+  <arg name="arm_id" default="panda" />
+  <arg name="use_ati" default="true" />
+  <arg name="x"           default="0"     doc="How far forward to place the base of the robot in [m]?" />
+  <arg name="y"           default="0"     doc="How far leftwards to place the base of the robot in [m]?" />
+  <arg name="z"           default="0"     doc="How far upwards to place the base of the robot in [m]?" />
+  <arg name="roll"        default="0"     doc="How much to rotate the base of the robot around its X-axis in [rad]?" />
+  <arg name="pitch"       default="0"     doc="How much to rotate the base of the robot around its Y-axis in [rad]?" />
+  <arg name="yaw"         default="0"     doc="How much to rotate the base of the robot around its Z-axis in [rad]?" />
+  
+
+  <param name="robot_description" command="$(find xacro)/xacro $(find franka_description)/robots/panda_arm.urdf.xacro hand:=$(arg load_gripper) transducer:=$(arg use_transducer)" />
+  <!-- <param if="$(arg load_robot_description)" name="$(arg robot_description)"
+          command="$(find xacro)/xacro $(find franka_description)/robots/panda_arm.urdf.xacro hand:=$(arg load_gripper) arm_id:=$(arg arm_id)
+                  gazebo:=true transducer:=$(arg use_transducer) ati:=$(arg use_ati)
+                  xyz:='$(arg x) $(arg y) $(arg z)'
+                  rpy:='$(arg roll) $(arg pitch) $(arg yaw)'" /> -->
+
+  <node name="robot_joint_state_publisher" pkg="franka_visualization" type="robot_joint_state_publisher" output="screen">
+    <rosparam command="load" file="$(find franka_visualization)/config/robot_settings.yaml" />
+    <param name="robot_ip" value="$(arg robot_ip)" />
+    <param name="publish_rate" value="$(arg publish_rate)" />
+  </node>
+
+  <node name="gripper_joint_state_publisher" pkg="franka_visualization" type="gripper_joint_state_publisher" output="screen" if="$(arg load_gripper)">
+    <rosparam command="load" file="$(find franka_visualization)/config/gripper_settings.yaml" />
+    <param name="robot_ip" value="$(arg robot_ip)" />
+    <param name="publish_rate" value="$(arg publish_rate)" />
+  </node>
+
+  <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+    <param name="rate" value="$(arg publish_rate)" />
+    <rosparam param="source_list">[robot_joint_state_publisher/joint_states, gripper_joint_state_publisher/joint_states]</rosparam>
+  </node>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node pkg="rviz" type="rviz" output="screen" name="rviz" args="-d $(find franka_visualization)/launch/franka_visualization.rviz"/>
+</launch>

@@ -1,0 +1,90 @@
+planner_configs:
+  common:
+    pose_distance:
+      pos_weight: 1.0
+      rot_weight: 0.1
+    path_interpolation_step_size: 0.01
+
+  RRT:
+    goal_bias_probability: 0.05
+    rrt_max_iter: 10000
+    extend_max_steps: 1
+    path_smooth_max_iter: 50
+    path_collision_check_step_size: 0.05
+    joint_steer_step_size: 0.1
+    dist_metric: 'weighted_joint_pos'  # distance metric for selecting the neareast node: joint_pos / weighted_joint_pos / links_pos
+    connect_joint_max_dist: 0.2
+
+  RRTConnect:
+    rrt_max_iter: 10000
+    extend_max_steps: 100
+    path_smooth_max_iter: 50
+    path_collision_check_step_size: 0.05
+    joint_steer_step_size: 0.1
+    dist_metric: 'weighted_joint_pos'  # distance metric for selecting the neareast node: joint_pos / weighted_joint_pos / links_pos
+    connect_joint_max_dist: 0.2
+
+  JTRRT:
+    goal_bias_probability: 0.5
+    rrt_max_iter: 10000
+    extend_max_steps: 1
+    path_smooth_max_iter: 50
+    path_collision_check_step_size: 0.05
+    joint_steer_step_size: 0.1
+    jacobian_steer_type: 'transpose'  # 'transpose' / 'inverse'
+    pos_steer_step_size: 0.01
+    angle_steer_step_size: 0.0314
+    dist_metric: 'weighted_joint_pos'  # distance metric for selecting the neareast node: joint_pos / weighted_joint_pos / links_pos
+    connect_joint_max_dist: 0.2
+    connect_tcp_max_dist: 0.1
+
+  IKRRT:
+    new_goal_ik_probability: 0.1
+    rrt_max_iter: 10000
+    extend_max_steps: 100
+    path_smooth_max_iter: 50
+    path_collision_check_step_size: 0.05
+    joint_steer_step_size: 0.1
+    dist_metric: 'weighted_joint_pos'  # distance metric for selecting the neareast node: joint_pos / weighted_joint_pos / links_pos
+    connect_joint_max_dist: 0.2
+    
+  ATACE:
+    rrt_max_iter: 10000
+    extend_max_steps: 10
+    # path_smooth_max_iter: 0  # path smooth cannot be done in ATACE
+    path_collision_check_step_size: 0.05
+    joint_steer_step_size: 0.1
+    pos_steer_step_size: 0.01
+    angle_steer_step_size: 0.0314
+    dist_metric: 'weighted_joint_pos'  # distance metric for selecting the neareast node: joint_pos / weighted_joint_pos / links_pos
+    connect_joint_max_dist: 0.2
+    connect_tcp_max_dist: 0.1
+
+  CBiRRT:
+    new_goal_ik_probability: 0.1
+    rrt_max_iter: 10000
+    extend_max_steps: 100
+    path_smooth_max_iter: 50
+    path_collision_check_step_size: 0.05
+    joint_steer_step_size: 0.1
+    dist_metric: 'weighted_joint_pos'  # distance metric for selecting the neareast node: joint_pos / weighted_joint_pos / links_pos
+    connect_joint_max_dist: 0.2
+    constraint_error_thres: 0.01
+    constraint_projection_max_iter: 100
+  
+  RRTStar:
+    goal_bias_probability: 0.05  # 控制向目标区域采样的概率
+    max_iterations: 10000  # 最大迭代次数
+    extend_step_size: 0.05  # 单步扩展的步长
+    path_resolution: 0.01  # 路径分辨率，用于平滑路径
+    collision_check_step_size: 0.05  # 碰撞检测的步长
+    neighborhood_radius: 0.5  # 用于重连的邻居半径
+    optimal_cost_to_come: 0.0  # 初始最优成本
+    cost_threshold: 1.0  # 成本阈值，用于判断是否需要重连
+    cost_function: "euclidean"  # 成本函数类型，例如欧几里得距离
+    sampling_strategy: "uniform"  # 采样策略，例如均匀分布或目标偏向
+    steering_k: 0.1  # 转向参数K，用于控制转向步长
+    steering_d: 0.1  # 转向参数D，用于控制转向步长
+    steering_max_angle: 1.57  # 最大转向角度
+    steering_max_distance: 0.1  # 最大转向距离
+    steering_randomness: 0.1  # 转向随机性参数

@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+
+<launch>
+    <arg name="enable_rviz" default="true" />
+    <arg name="enable_record" default="false" />
+
+    <!-- open kinect dk -->
+    <group ns="k4a" >
+        <include file="$(find azure_kinect_ros_driver)/launch/driver.launch" >
+            <arg name="overwrite_robot_description" value="false" />
+            <arg name="fps" value="30" />
+            <arg name="body_tracking_enabled" value="true" />
+            <arg name="body_tracking_smoothing_factor" value="1" />
+            <arg name="depth_mode" value="NFOV_UNBINNED" />
+            <!-- <arg name="depth_mode" value="WFOV_2X2BINNED" /> -->
+            <!-- <arg name="depth_mode" value="WFOV_UNBINNED" /> -->
+            <arg name="rgb_point_cloud" value="false" />
+            <arg name="point_cloud_in_depth_frame" value="false" />
+            <arg name="recording_file" value="/home/robotics1/us/us_scene_ws/yxj09141214.mkv" if="$(arg enable_record)" />
+            <arg name="recording_loop_enabled" value="true" if="$(arg enable_record)" />
+        </include>
+    </group>
+
+    <!-- publish camera to panda_link0 tf -->
+    <include file="$(find easy_handeye)/launch/publish.launch">
+        <arg name="eye_on_hand" value="false"/>
+        <arg name="robot_base_frame" value="panda_link0" />
+        <arg name="tracking_base_frame" value="rgb_camera_link" />
+        <arg name="inverse" value="true" />
+        <!-- <arg name="calibration_file" value="$(find easy_handeye)/franka_kinect_eye_to_hand_calibration_eye_on_base_20230220.yaml" /> -->
+        <arg name="calibration_file" value="$(find easy_handeye)/param/franka_kinect_eye_to_hand_calibration_202309091040_eye_on_base_high.yaml" />
+        <!-- <arg name="calibration_file" value="$(find easy_handeye)/franka_kinect_eye_to_hand_calibration_20230825__eye_on_base.yaml" /> -->
+        <!-- <arg name="calibration_file" value="$(find easy_handeye)/franka_kinect_eye_to_hand_calibration_20230907__eye_on_base.yaml" /> -->
+    </include>
+    
+    <!-- scene perception -->
+    <include file="$(find us_scene_perception)/launch/us_scene_perception.launch">
+        <arg name="enable_record" value="$(arg enable_record)" />
+    </include>
+
+    <!-- visulization -->
+    <include file="$(find us_scene_visualization)/launch/us_scene_visualization.launch" if="$(arg enable_rviz)">
+        <arg name="load_gripper" value="false" />
+        <arg name="load_transducer" value="true" />
+    </include>
+
+
+    <node pkg="us_scene_perception" name="us_scene_perception_trajectory_generator" type="us_scene_perception_trajectory_generator"/>
+
+</launch>

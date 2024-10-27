@@ -1,0 +1,28 @@
+<launch>
+  <!-- Load robot description -->
+  <arg name="robot_description" default="$(find franka_description)/urdf/your_robot.urdf"/>
+  <param name="robot_description" textfile="$(arg robot_description)" />
+
+  <!-- Load robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- Load MoveIt! -->
+  <include file="$(find your_moveit_config_pkg)/launch/moveit_planning_execution.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+
+  <!-- Load your custom controller -->
+  <node name="my_whole_task_controller_node" pkg="franka_us_controllers" type="MyWholeTaskController" output="screen">
+    <!-- Add any additional parameters needed for your controller -->
+    <param name="urdf_file_relative_to_us_pkg_path" value="../franka_ros_ultra/franka_description/robots/panda_ati_probe_for_pinocchio.urdf"/>
+    <param name="arm_id" value="panda"/>
+    <param name="joint_names" value="panda_joint1 panda_joint2 panda_joint3 panda_joint4 panda_joint5 panda_joint6 panda_joint7"/>
+    <param name="debug_mode" value="false"/>
+    <param name="scanning_trajectory_offset" command="load">
+      [0.0, -0.01, 0.0]  # Example values, adjust as needed
+    </param>
+    <param name="ns_torque_threshold" value="4.0"/>
+    <param name="probe_rotate_x" value="0"/>
+    <param name="p_j4_threshold" value="0.34"/>
+  </node>
+</launch>

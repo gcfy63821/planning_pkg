@@ -1,0 +1,89 @@
+<launch>
+
+    <rosparam command="load" file="$(find arm_planning)/config/panda_configs.yaml" />
+    <rosparam command="load" file="$(find arm_planning)/config/planner_configs.yaml" />
+    
+
+    <!-- <include file="$(find panda_moveit_config)/launch/new_demo.launch" >
+        <arg name="use_gui" default="false" />
+        <arg name="use_rviz" default="false" />
+    </include> -->
+    
+    
+    
+    <!-- <node name="rviz_node" pkg="rviz" type="rviz" respawn="false" 
+        args="-d $(find arm_planning)/rviz/planning_vis.rviz" output="screen"  >
+    </node> -->
+    <!-- the followings are from franka_visualization.launch -->
+    <arg name="load_gripper" default="false" />
+    <arg name="use_transducer" default="true" />
+    <arg name="robot_ip" default="172.16.0.2" />
+    <arg name="publish_rate" default="30" />
+    <node name="robot_joint_state_publisher" pkg="franka_visualization" type="robot_joint_state_publisher" output="screen">
+    <rosparam command="load" file="$(find franka_visualization)/config/robot_settings.yaml" />
+    <param name="robot_ip" value="$(arg robot_ip)" />
+    <param name="publish_rate" value="$(arg publish_rate)" />
+    </node>
+
+    <node name="gripper_joint_state_publisher" pkg="franka_visualization" type="gripper_joint_state_publisher" output="screen" if="$(arg load_gripper)">
+        <rosparam command="load" file="$(find franka_visualization)/config/gripper_settings.yaml" />
+        <param name="robot_ip" value="$(arg robot_ip)" />
+        <param name="publish_rate" value="$(arg publish_rate)" />
+    </node>
+
+    <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+        <param name="rate" value="$(arg publish_rate)" />
+        <rosparam param="source_list">[robot_joint_state_publisher/joint_states, gripper_joint_state_publisher/joint_states]</rosparam>
+    </node>
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+ <!-- the  followings are edited from demo.launch -->
+    <arg name="arm_id" default="panda" />
+    <arg name="pipeline" default="ompl" />
+    <arg name="db" default="false" />
+    <arg name="db_path" default="$(find panda_moveit_config)/default_warehouse_mongo_db" />
+    <arg name="debug" default="false" />
+    <arg name="load_gripper" default="false" />
+
+    <arg name="load_robot_description" default="true"/>
+
+    <!-- Choose controller manager: fake, simple, or ros_control -->
+    <arg name="moveit_controller_manager" default="simple" />
+    <!-- Set execution mode for fake execution controllers -->
+    <arg name="fake_execution_type" default="interpolate" />
+    <!-- Transmission used for joint control: position, velocity, or effort -->
+    <arg name="transmission" />
+
+    <!-- By default, hide joint_state_publisher's GUI in 'fake' controller_manager mode -->
+    <arg name="use_gui" default="true" />
+    <arg name="use_rviz" default="true" />
+    <!-- Use rviz config for MoveIt tutorial -->
+    <arg name="rviz_tutorial" default="false" />
+
+    <!-- If needed, broadcast static tf for robot root -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 0 world $(arg arm_id)_link0" />
+
+
+
+    <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
+    <include file="$(find arm_planning)/launch/planning_move_group.launch" pass_all_args="true">
+        <arg name="allow_trajectory_execution" value="true" />
+        <arg name="info" value="true" />
+    </include>
+
+    <!-- Run Rviz and load the default config to see the state of the move_group node -->
+    <include file="$(find panda_moveit_config)/launch/moveit_rviz.launch" if="$(arg use_rviz)">
+        <arg name="rviz_tutorial" value="$(arg rviz_tutorial)"/>
+        <arg name="rviz_config" value="$(find panda_moveit_config)/moveit.rviz"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <!-- If database loading was enabled, start mongodb as well -->
+    <include file="$(find panda_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
+        <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
+    </include>
+
+
+
+</launch>

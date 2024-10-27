@@ -1,0 +1,12 @@
+<launch>
+ <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
+ <!-- <arg name="moveit_controller_manager" default="moveit_simple_controller_manager/MoveItSimpleControllerManager" />
+ <param name="moveit_controller_manager" value="$(arg moveit_controller_manager)"/> -->
+ <!-- 加载自定义控制器的部分 -->
+ <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false"
+      output="screen" args="spawn my_whole_task__controller" />
+
+
+ <!-- load controller_list -->
+ <rosparam file="$(find arm_planning)/config/my_controllers.yaml"/>
+</launch>

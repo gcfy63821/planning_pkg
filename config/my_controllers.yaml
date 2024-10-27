@@ -1,0 +1,29 @@
+my_whole_task_controller:
+    type: franka_us_controllers/MyWholeTaskController
+    urdf_file_relative_to_us_pkg_path: ../franka_ros_ultra/franka_description/robots/panda_ati_probe_for_pinocchio.urdf
+    arm_id: panda
+    joint_names:
+        - panda_joint1
+        - panda_joint2
+        - panda_joint3
+        - panda_joint4
+        - panda_joint5
+        - panda_joint6
+        - panda_joint7
+    debug_mode: false
+    scanning_trajectory_offset:
+        # lsq
+        # - 0.0 # x
+        # - -0.025 # y positive is go away from neck
+        # - 0.01 # z
+        # yxj
+        # - 0.0 # x
+        # - -0.02 # y positive is go away from neck
+        # - 0.05 # z positive is go front
+        - 0.0 # x
+        - -0.01 # y positive is go away from neck
+        - 0.0 # z positive is go front
+
+    ns_torque_threshold: 4.0
+    probe_rotate_x: 0 # in degree
+    p_j4_threshold: 0.34
